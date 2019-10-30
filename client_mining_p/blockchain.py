@@ -116,7 +116,7 @@ class Blockchain(object):
         guess_hash = hashlib.sha256(guess).hexdigest()
 
         # TODO: Change back to six zeroes
-        return guess_hash[:2] == "00"
+        return guess_hash[:6] == "000000"
 
 
 # Instantiate our Node
@@ -131,8 +131,6 @@ blockchain = Blockchain()
 
 @app.route('/mine', methods=['GET'])
 def mine():
-    # Run the proof of work algorithm to get the next proof
-    proof = blockchain.proof_of_work(blockchain.last_block)
 
     # Forge the new Block by adding it to the chain with the proof
     last_block = blockchain.last_block
