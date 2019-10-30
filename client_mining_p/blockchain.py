@@ -95,14 +95,14 @@ class Blockchain(object):
         correct number of leading zeroes.
         :return: True if the resulting hash is a valid proof, False otherwise
         """
-        print(proof)
+        # print(proof)
         guess = f'{block_string}{proof}'.encode()
         guess_hash = hashlib.sha256(guess).hexdigest()
 
-        print(guess_hash)
+        # print(guess_hash)
 
         # TODO: Change back to six zeroes
-        return guess_hash[:4] == "0000"
+        return guess_hash[:5] == "00000"
 
 
 # Instantiate our Node
@@ -119,12 +119,11 @@ blockchain = Blockchain()
 def mine():
     data = request.get_json()
 
-    print(data)
-
     if data["proof"] is None or data["id"] is None:
         return jsonify({'message': 'Error! Provide a proof and id!'}), 400
 
-    valid_proof = blockchain.valid_proof(blockchain.last_block, data["proof"])
+    block_string = json.dumps(blockchain.last_block, sort_keys=True).encode()
+    valid_proof = blockchain.valid_proof(block_string, data["proof"])
 
     # print(valid_proof)
 

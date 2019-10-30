@@ -38,7 +38,7 @@ def valid_proof(block_string, proof):
     guess_hash = hashlib.sha256(guess).hexdigest()
     # We hash the guess, which is then evaluated to see if it's valid
     # print(guess_hash)
-    return guess_hash[:4] == "0000"
+    return guess_hash[:5] == "00000"
 
 
 if __name__ == '__main__':
@@ -74,7 +74,7 @@ if __name__ == '__main__':
         
         new_proof = proof_of_work(last_block)
 
-        print(new_proof)
+        # print(new_proof)
 
         # When found, POST it to the server {"proof": new_proof, "id": id}
         post_data = {"proof": new_proof, "id": id}
