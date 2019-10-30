@@ -82,23 +82,6 @@ class Blockchain(object):
     def last_block(self):
         return self.chain[-1]
 
-    def proof_of_work(self, block):
-        """
-        Simple Proof of Work Algorithm
-        Stringify the block and look for a proof.
-        Loop through possibilities, checking each one against `valid_proof`
-        in an effort to find a number that is a valid proof
-        :return: A valid proof for the provided block
-        """
-       
-        # sort_keys=True will make sure the dictionairy is ordered alphabetically
-        block_string = json.dumps(block, sort_keys=True).encode()
-
-        proof = 0
-        while self.valid_proof(block_string, proof) is False:
-            proof += 1
-
-        return proof
 
     @staticmethod
     def valid_proof(block_string, proof):
@@ -112,10 +95,14 @@ class Blockchain(object):
         correct number of leading zeroes.
         :return: True if the resulting hash is a valid proof, False otherwise
         """
+        print(proof)
         guess = f'{block_string}{proof}'.encode()
         guess_hash = hashlib.sha256(guess).hexdigest()
 
-        return guess_hash[:2] == "00"
+        print(guess_hash)
+
+        # TODO: Change back to six zeroes
+        return guess_hash[:4] == "0000"
 
 
 # Instantiate our Node
@@ -132,12 +119,16 @@ blockchain = Blockchain()
 def mine():
     data = request.get_json()
 
+    print(data)
+
     if data["proof"] is None or data["id"] is None:
-        print('\n\n\n\here\n\n\n\n')
         return jsonify({'message': 'Error! Provide a proof and id!'}), 400
 
+    valid_proof = blockchain.valid_proof(blockchain.last_block, data["proof"])
 
-    if blockchain.valid_proof(blockchain.last_block, data["proof"]):
+    # print(valid_proof)
+
+    if valid_proof:
         # Forge the new Block by adding it to the chain with the proof
         last_block = blockchain.last_block
         previous_hash = blockchain.hash(last_block)
@@ -156,7 +147,7 @@ def mine():
 
     # Proof is incorrect
     else:
-        return jsonify({'message': "Proof is incorrect! Try again!"})
+        return jsonify({'message': "Proof is incorrect! Try again!"}), 400
 
         
 

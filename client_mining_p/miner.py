@@ -19,7 +19,6 @@ def proof_of_work(block):
     while valid_proof(block_string, proof) is False:
         proof += 1
 
-    print(f"Final proof is {proof}")
     return proof
 
 
@@ -34,11 +33,12 @@ def valid_proof(block_string, proof):
     correct number of leading zeroes.
     :return: True if the resulting hash is a valid proof, False otherwise
     """
+
     guess = f'{block_string}{proof}'.encode()
-    # We hash the guess, which is then evaluated to see if it's valid
     guess_hash = hashlib.sha256(guess).hexdigest()
+    # We hash the guess, which is then evaluated to see if it's valid
     # print(guess_hash)
-    return guess_hash[:2] == "00"
+    return guess_hash[:4] == "0000"
 
 
 if __name__ == '__main__':
@@ -54,8 +54,11 @@ if __name__ == '__main__':
     print("ID is", id)
     f.close()
 
+    coins = 0
+
     # Run forever until interrupted
     while True:
+        print("\nStarting to mine...")
         r = requests.get(url=node + "/last-block")
         # Handle non-json response
         try:
@@ -68,20 +71,18 @@ if __name__ == '__main__':
 
         # TODO: Get the block from `data` and use it to look for a new proof
         last_block = data['last_block']
-        # print(last_block)
-
+        
         new_proof = proof_of_work(last_block)
+
+        print(new_proof)
 
         # When found, POST it to the server {"proof": new_proof, "id": id}
         post_data = {"proof": new_proof, "id": id}
         r = requests.post(url=node + "/mine", json=post_data)
         data = r.json()
 
-        print(data["message"])
-
         if data["message"] == "Success! New Block Forged!":
             print(data)
-            break
+            coins += 1
         else:
             print(data["message"])
-            break
