@@ -137,10 +137,8 @@ def mine():
         print('\n\n\n\here\n\n\n\n')
         return jsonify({'message': 'Error! Provide a proof and id!'}), 400
 
-    print(data["proof"])
-    block_string = json.dumps(block, sort_keys=True).encode()
 
-    if blockchain.valid_proof(block_string, data["proof"]):
+    if blockchain.valid_proof(blockchain.last_block, data["proof"]):
         # Forge the new Block by adding it to the chain with the proof
         last_block = blockchain.last_block
         previous_hash = blockchain.hash(last_block)
