@@ -118,7 +118,7 @@ class Blockchain(object):
         # print(guess_hash)
 
         # TODO: Change back to six zeroes
-        return guess_hash[:3] == "000"
+        return guess_hash[:4] == "0000"
 
 
 # Instantiate our Node
@@ -181,10 +181,18 @@ def full_chain():
 def new_transaction():
     pass
     # Pull data from request
+    data = request.get_json()
+
     # Check for 'sender', 'recipient', and 'amount'
+    if data["sender"] is None or data["recipient"] is None or data["amount"] is None:
         # If not, return 404
-    # Else
+        return jsonify({'message': "Make sure to pass in a valid sender, receiver, and amount"}), 400
+    else:
+        # Create new transaction and store the return in a variable
+        block_index = blockchain.new_transaction(data["sender"], data["recipient"], data["amount"])
+
         # return success message with index of the block containing the transaction
+        return jsonify({'message': f"Successfully added transaction to block with index of {block_index}"}), 200
 
 @app.route('/last-block', methods=['GET'])
 def last_block():
