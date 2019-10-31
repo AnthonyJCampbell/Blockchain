@@ -144,7 +144,7 @@ def mine():
 
     if valid_proof:
         # We need to create a reward via blockchain.new_transaction("0", data.id, 1)
-        Blockchain.new_transaction("0", data.id, 1)
+        blockchain.new_transaction("0", data["id"], 1)
 
         # Forge the new Block by adding it to the chain with the proof
         last_block = blockchain.last_block
@@ -177,6 +177,14 @@ def full_chain():
     }
     return jsonify(response), 200
 
+@app.route('/transactions/new', methods=['POST'])
+def new_transaction():
+    pass
+    # Pull data from request
+    # Check for 'sender', 'recipient', and 'amount'
+        # If not, return 404
+    # Else
+        # return success message with index of the block containing the transaction
 
 @app.route('/last-block', methods=['GET'])
 def last_block():
