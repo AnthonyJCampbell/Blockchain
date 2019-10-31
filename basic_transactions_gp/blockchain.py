@@ -49,6 +49,19 @@ class Blockchain(object):
         # Return the new block
         return block
 
+    def new_transaction(self, sender, recipient, amount):
+        transaction = {
+            'sender': sender,
+            'recipient': recipient,
+            'amount': amount
+        }
+
+        # Add transaction to list of transactions
+        self.last_block["transactions"].append(transaction)
+        print(self.last_block["transactions"])
+
+        # Return the index of the block that will hold the transaction
+
     @staticmethod
     def hash(block):
         """
@@ -150,16 +163,17 @@ def mine():
     else:
         return jsonify({'message': "Proof is incorrect! Try again!"}), 400
 
-        
-
 
 @app.route('/chain', methods=['GET'])
 def full_chain():
+    blockchain.new_transaction("sender", "receiver", 1)
+
     response = {
         'chain': blockchain.chain,
         'chain_length': len(blockchain.chain)
     }
     return jsonify(response), 200
+
 
 @app.route('/last-block', methods=['GET'])
 def last_block():
