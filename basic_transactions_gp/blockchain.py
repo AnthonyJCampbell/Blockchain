@@ -56,11 +56,12 @@ class Blockchain(object):
             'amount': amount
         }
 
-        # Add transaction to list of transactions
-        self.last_block["transactions"].append(transaction)
-        print(self.last_block["transactions"])
+        # Add transaction to list of current transactions
+        self.current_transactions.append(transaction)
 
         # Return the index of the block that will hold the transaction
+        return self.chain.index(self.last_block)
+
 
     @staticmethod
     def hash(block):
@@ -117,7 +118,7 @@ class Blockchain(object):
         # print(guess_hash)
 
         # TODO: Change back to six zeroes
-        return guess_hash[:5] == "00000"
+        return guess_hash[:3] == "000"
 
 
 # Instantiate our Node
@@ -128,7 +129,6 @@ node_identifier = str(uuid4()).replace('-', '')
 
 # Instantiate the Blockchain
 blockchain = Blockchain()
-
 
 @app.route('/mine', methods=['POST'])
 def mine():
@@ -143,6 +143,9 @@ def mine():
     # print(valid_proof)
 
     if valid_proof:
+        # We need to create a reward via blockchain.new_transaction("0", data.id, 1)
+        Blockchain.new_transaction("0", data.id, 1)
+
         # Forge the new Block by adding it to the chain with the proof
         last_block = blockchain.last_block
         previous_hash = blockchain.hash(last_block)
@@ -166,7 +169,7 @@ def mine():
 
 @app.route('/chain', methods=['GET'])
 def full_chain():
-    blockchain.new_transaction("sender", "receiver", 1)
+    # blockchain.new_transaction("sender", "receiver", 1)
 
     response = {
         'chain': blockchain.chain,
